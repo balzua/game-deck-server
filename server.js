@@ -7,6 +7,7 @@ const passport = require('passport');
 
 
 const { router: usersRouter } = require('./users');
+const { router: libraryRouter } = require('./library');
 const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
 
 mongoose.Promise = global.Promise;

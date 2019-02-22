@@ -36,8 +36,8 @@ passport.use(jwtStrategy);
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
-app.use('/library/', jwtAuth, libraryRouter);
 app.use('/games/', jwtAuth, gameRouter);
+app.use('/library/', jwtAuth, libraryRouter);
 app.use('/users/', usersRouter);
 app.use('/auth/', authRouter);
 

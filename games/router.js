@@ -34,6 +34,7 @@ router.get('/search/', (req, res) => {
 });
 
 router.post('/', jsonParser, (req, res) => {
+  console.log(req.user);
   if (!req.body.guid) {
     return res.status(422).json({
       code: 422,
@@ -65,7 +66,7 @@ router.post('/', jsonParser, (req, res) => {
   };
 }); 
 
-router.put('/games', jsonParser, (req, res) => {
+router.put('/:id', jsonParser, (req, res) => {
   const editableFields = ['rating', 'libraryStatus', 'favorite']
   if (req.body.user !== req.user.username) {
     return res.status(403).json({
@@ -74,14 +75,26 @@ router.put('/games', jsonParser, (req, res) => {
       message: 'You are not allowed to edit games for that user'
     });
   }
+  if (req.body.id !== req.params.id) {
+    return res.status(400).json({
+      code: 400,
+      reason: 'ValidationError',
+      message: 'The request body ID and url ID must match'
+    });
+  }
   let updated = {};
   editableFields.forEach(field => {
     if (field in req.body) {
       updated[field] = req.body[field]
     }
   });
-  Game.findOneAndUpdate({user: req.user.username}, updated, {new: true})
+  Game.findOneAndUpdate({user: req.user.username, _id: req.body.id}, updated, {new: true})
   .then(updated => res.status(204).end());
+});
+
+router.delete('/:id', (req, res) => {
+  Game.findOneAndDelete({_id: req.params.id, user: req.user.username})
+  .then(() => res.status(204).end());
 });
 
 module.exports = {router};

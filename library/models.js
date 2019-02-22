@@ -1,7 +1,6 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const {GameSchema} = require('../games/models');
 
 mongoose.Promise = global.Promise;
 
@@ -43,7 +42,6 @@ const LibrarySchema = mongoose.Schema({
             default: 0
         }
     },
-    games: [GameSchema],
     platforms: [String]
 });
 

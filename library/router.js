@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 const {Library, Game} = require('./models');
 const {GB_API_KEY} = require('../config');
+const {jwtAuth} = require('../server');
 
 const router = express.Router();
 
@@ -33,15 +34,18 @@ router.get('/games/search/:query', (req, res) => {
     });
 });
 
+//Fetches a specific user's library.
 router.get('/:user', (req, res) => {
-    console.log('users route');
     Library.findOne({user: req.params.user})
-    .then(library => res.status(200).send(library))
-    .catch(err => res.status(404).send({
-        reason: 'NotFoundError',
-        message: 'Library Not Found',
-        user: req.params.user
-    }));
+    .then(library => {
+      //Check if the requested user's library is private. Only send the library if it is, or if the user matches the logged-in user.
+      if (!library.private || (library.private && library.user === req.user)) {
+        return res.status(200).json(library);
+      } else {
+        //Todo: improve error message.
+        return res.status(401).send('Not allowed');
+      }
+    });
 });
 
 router.post('/:user/games', jsonParser, (req, res) => {
@@ -72,6 +76,10 @@ router.post('/:user/games', jsonParser, (req, res) => {
   })
   .then(() => res.status(201).send());
 }); 
+
+router.put('/:user', (req, res) => {
+  
+});
 
 module.exports = {router};
 

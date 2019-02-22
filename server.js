@@ -33,18 +33,11 @@ app.use(function (req, res, next) {
 passport.use(localStrategy);
 passport.use(jwtStrategy);
 
-app.use('/library', libraryRouter);
-app.use('/users/', usersRouter);
-app.use('/auth/', authRouter);
-
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
-// A protected endpoint which needs a valid JWT to access it
-app.get('/api/protected', jwtAuth, (req, res) => {
-  return res.json({
-    data: 'rosebud'
-  });
-});
+app.use('/library/', jwtAuth, libraryRouter);
+app.use('/users/', usersRouter);
+app.use('/auth/', authRouter);
 
 app.use('*', (req, res) => {
   return res.status(404).json({ message: 'Not Found' });
@@ -91,4 +84,4 @@ if (require.main === module) {
   runServer(DATABASE_URL).catch(err => console.error(err));
 }
 
-module.exports = { app, runServer, closeServer };
+module.exports = { app, runServer, closeServer, jwtAuth };

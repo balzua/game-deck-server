@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const {User} = require('./models');
+const {Library} = require('../library');
 
 const router = express.Router();
 
@@ -55,7 +56,7 @@ router.post('/', jsonParser, (req, res) => {
       min: 1
     },
     password: {
-      min: 10,
+      min: 4,
       max: 72
     }
   };
@@ -103,12 +104,16 @@ router.post('/', jsonParser, (req, res) => {
       return User.hashPassword(password);
     })
     .then(hash => {
-      return User.create({
+      const userCreation = User.create({
         username,
         password: hash,
         firstName,
         lastName
       });
+      const libraryCreation = Library.create({
+        user: username
+      });
+      return userCreation;
     })
     .then(user => {
       return res.status(201).json(user.serialize());

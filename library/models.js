@@ -60,7 +60,8 @@ const LibrarySchema = mongoose.Schema({
             default: 0
         }
     },
-    games: [GameSchema]
+    games: [GameSchema],
+    platforms: [String]
 });
 
 const Library = mongoose.model('Library', LibrarySchema);

@@ -64,5 +64,6 @@ const LibrarySchema = mongoose.Schema({
 });
 
 const Library = mongoose.model('Library', LibrarySchema);
+const Game = mongoose.model('Game', GameSchema);
 
-module.exports = {Library};
+module.exports = {Library, Game};

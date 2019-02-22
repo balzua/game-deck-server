@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 const {Library, Game} = require('./models');
 const {GB_API_KEY} = require('../config');
-const {jwtAuth} = require('../server');
 
 const router = express.Router();
 
@@ -56,6 +55,13 @@ router.post('/:user/games', jsonParser, (req, res) => {
       message: 'An ID is required to add games'
     });
   }
+  if (req.params.user !== req.user.username) {
+    return res.status(403).json({
+      code: 403,
+      reason: 'AuthorizationError',
+      message: 'You are not allowed to add games for that user'
+    });
+  }
   axios.get(`https://www.giantbomb.com/api/game/${req.body.guid}`, {
     params: {
       api_key: GB_API_KEY,
@@ -77,8 +83,23 @@ router.post('/:user/games', jsonParser, (req, res) => {
   .then(() => res.status(201).send());
 }); 
 
-router.put('/:user', (req, res) => {
-  
+router.put('/:user', jsonParser, (req, res) => {
+  const editableFields = ['platforms', 'private'];
+  if (req.params.user !== req.user.username) {
+    return res.status(403).json({
+      code: 403,
+      reason: 'AuthorizationError',
+      message: 'You are not allowed to edit games for that user'
+    });
+  }
+  let updated = {};
+  editableFields.forEach(field => {
+    if (field in req.body) {
+      updated[field] = req.body[field]
+    }
+  });
+  Library.findOneAndUpdate({user: req.user.username}, updated, {new: true})
+  .then(updated => res.status(204).end());
 });
 
 module.exports = {router};

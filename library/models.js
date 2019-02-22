@@ -63,6 +63,6 @@ const LibrarySchema = mongoose.Schema({
     games: [GameSchema]
 });
 
-const Library = mongoose.model('Library', LibrarySchema, 'libraries');
+const Library = mongoose.model('Library', LibrarySchema);
 
 module.exports = {Library};

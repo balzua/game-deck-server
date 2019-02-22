@@ -4,24 +4,6 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
-const GameSchema = mongoose.Schema({
-    id: {
-        type: String,
-        required: true
-    },
-    name: String,
-    description: String,
-    image: String,
-    rating: Number,
-    genres: [String],
-    libraryStatus: String,
-    hoursPlayed: Number,
-    releaseDate: Date,
-    platforms: [String],
-    favorite: Boolean
-});
-
-
 const LibrarySchema = mongoose.Schema({
     user: {
         type: String,
@@ -60,9 +42,9 @@ const LibrarySchema = mongoose.Schema({
             default: 0
         }
     },
-    games: [GameSchema]
+    platforms: [String]
 });
 
-const Library = mongoose.model('Library', LibrarySchema, 'libraries');
+const Library = mongoose.model('Library', LibrarySchema);
 
 module.exports = {Library};

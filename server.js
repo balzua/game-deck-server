@@ -8,6 +8,7 @@ const passport = require('passport');
 
 const { router: usersRouter } = require('./users');
 const { router: libraryRouter } = require('./library');
+const { router: gameRouter } = require('./games');
 const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
 
 mongoose.Promise = global.Promise;
@@ -33,18 +34,12 @@ app.use(function (req, res, next) {
 passport.use(localStrategy);
 passport.use(jwtStrategy);
 
-app.use('/api/library', libraryRouter);
-app.use('/api/users/', usersRouter);
-app.use('/api/auth/', authRouter);
-
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
-// A protected endpoint which needs a valid JWT to access it
-app.get('/api/protected', jwtAuth, (req, res) => {
-  return res.json({
-    data: 'rosebud'
-  });
-});
+app.use('/games/', jwtAuth, gameRouter);
+app.use('/library/', jwtAuth, libraryRouter);
+app.use('/users/', usersRouter);
+app.use('/auth/', authRouter);
 
 app.use('*', (req, res) => {
   return res.status(404).json({ message: 'Not Found' });
@@ -91,4 +86,4 @@ if (require.main === module) {
   runServer(DATABASE_URL).catch(err => console.error(err));
 }
 
-module.exports = { app, runServer, closeServer };
+module.exports = { app, runServer, closeServer, jwtAuth };

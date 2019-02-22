@@ -8,6 +8,7 @@ const passport = require('passport');
 
 const { router: usersRouter } = require('./users');
 const { router: libraryRouter } = require('./library');
+const { router: gameRouter } = require('./games');
 const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
 
 mongoose.Promise = global.Promise;
@@ -36,6 +37,7 @@ passport.use(jwtStrategy);
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
 app.use('/library/', jwtAuth, libraryRouter);
+app.use('/games/', jwtAuth, gameRouter);
 app.use('/users/', usersRouter);
 app.use('/auth/', authRouter);
 

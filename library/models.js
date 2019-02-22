@@ -1,26 +1,9 @@
 'use strict';
 
 const mongoose = require('mongoose');
+const {GameSchema} = require('../games/models');
 
 mongoose.Promise = global.Promise;
-
-const GameSchema = mongoose.Schema({
-    id: {
-        type: String,
-        required: true
-    },
-    name: String,
-    description: String,
-    image: String,
-    rating: Number,
-    genres: [String],
-    libraryStatus: String,
-    hoursPlayed: Number,
-    releaseDate: Date,
-    platforms: [String],
-    favorite: Boolean
-});
-
 
 const LibrarySchema = mongoose.Schema({
     user: {
@@ -65,6 +48,5 @@ const LibrarySchema = mongoose.Schema({
 });
 
 const Library = mongoose.model('Library', LibrarySchema);
-const Game = mongoose.model('Game', GameSchema);
 
-module.exports = {Library, Game};
+module.exports = {Library};

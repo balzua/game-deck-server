@@ -4,6 +4,7 @@ const axios = require('axios');
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 const {Game} = require('./models');
+const {Library} = require('../library');
 const {GB_API_KEY} = require('../config');
 
 const router = express.Router();
@@ -60,7 +61,10 @@ router.post('/', jsonParser, (req, res) => {
     user: req.user.username
   }))
   .then(game => {
-    return Game.create(game)
+    return Game.create(game);
+  })
+  .then(game => {
+    return Library.findOneAndUpdate({user: req.user.username}, {$push: {games: game._id}});
   })
   .then(() => res.status(201).send());
   };

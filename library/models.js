@@ -42,7 +42,8 @@ const LibrarySchema = mongoose.Schema({
             default: 0
         }
     },
-    platforms: [String]
+    platforms: [String],
+    games: [{type: mongoose.Schema.ObjectId, ref: "Game"}]
 });
 
 const Library = mongoose.model('Library', LibrarySchema);

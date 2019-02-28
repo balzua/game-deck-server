@@ -15,7 +15,7 @@ const LibrarySchema = mongoose.Schema({
         required: true,
         default: true
     },
-    genreScores: {
+    chartScores: {
         action: {
             type: Number,
             required: true,

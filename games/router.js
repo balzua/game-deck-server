@@ -18,13 +18,11 @@ router.get('/search/', (req, res) => {
             api_key: GB_API_KEY
         }
     })
-    // Prevent requests from going too fast by imposing a 1s wait time
-    .then(gbResponse => new Promise(resolve => setTimeout(() => resolve(gbResponse), 1000)))
     // Extract only the guid and name from the response object array
     .then(gbResponse => {
       const results = gbResponse.data.results.map(result => ({
-            name: result.name,
-            guid: result.guid
+            label: result.name,
+            value: result.guid
         }));
       return results;
     })
@@ -35,14 +33,7 @@ router.get('/search/', (req, res) => {
 });
 
 router.post('/', jsonParser, (req, res) => {
-  console.log(req.user);
-  if (!req.body.guid) {
-    return res.status(422).json({
-      code: 422,
-      reason: 'RequestError',
-      message: 'An ID is required to add games'
-    });
-  }
+  console.log(req.body);
   for (let i = 0; i < req.body.guid.length; i++) {
     axios.get(`https://www.giantbomb.com/api/game/${req.body.guid[i]}`, {
     params: {
@@ -71,15 +62,9 @@ router.post('/', jsonParser, (req, res) => {
 }); 
 
 router.put('/:id', jsonParser, (req, res) => {
-  const editableFields = ['rating', 'libraryStatus', 'favorite']
-  if (req.body.user !== req.user.username) {
-    return res.status(403).json({
-      code: 403,
-      reason: 'AuthorizationError',
-      message: 'You are not allowed to edit games for that user'
-    });
-  }
-  if (req.body.id !== req.params.id) {
+  const editableFields = ['userRating', 'libraryStatus', 'favorite']
+  console.log(req.body);
+  if (req.body.id != req.params.id) {
     return res.status(400).json({
       code: 400,
       reason: 'ValidationError',
@@ -92,12 +77,12 @@ router.put('/:id', jsonParser, (req, res) => {
       updated[field] = req.body[field]
     }
   });
-  Game.findOneAndUpdate({user: req.user.username, _id: req.body.id}, updated, {new: true})
+  Game.findOneAndUpdate({user: req.user.username, id: req.body.id}, updated, {new: true})
   .then(updated => res.status(204).end());
 });
 
 router.delete('/:id', (req, res) => {
-  Game.findOneAndDelete({_id: req.params.id, user: req.user.username})
+  Game.findOneAndDelete({id: req.params.id, user: req.user.username})
   .then(() => res.status(204).end());
 });
 

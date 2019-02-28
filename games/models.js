@@ -36,6 +36,7 @@ const GameSchema = mongoose.Schema({
 });
 
 GameSchema.methods.serialize = function() {
+  const releaseDate = new Date(this.releaseDate);
   return {
     id: this.id,
     name: this.name,
@@ -44,7 +45,7 @@ GameSchema.methods.serialize = function() {
     rating: this.rating,
     genres: this.genres,
     platforms: this.platforms,
-    releaseDate: this.releaseDate,
+    releaseDate: `${releaseDate.getMonth() + 1}-${releaseDate.getDate()}-${releaseDate.getFullYear()}`,
     userRating: this.userRating,
     favorite: this.favorite,
     hoursPlayed: this.hoursPlayed,

@@ -11,9 +11,13 @@ const router = express.Router();
 //Fetches a specific user's library.
 router.get('/:user', (req, res) => {
     Library.findOne({user: req.params.user})
+    .populate({
+      'path': 'games',
+      'match': {user: req.params.user}
+    })
     .then(library => {
       //Check if the requested user's library is private. Only send the library if it is, or if the user matches the logged-in user.
-      if (!library.private || (library.private && library.user === req.user)) {
+      if (!library.private || (library.private && library.user === req.user.username)) {
         return res.status(200).json(library);
       } else {
         //Todo: improve error message.

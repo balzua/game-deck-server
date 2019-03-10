@@ -42,9 +42,37 @@ const LibrarySchema = mongoose.Schema({
             default: 0
         }
     },
+    libraryStats: {
+      favoriteGenre: {
+        type: String,
+        default: 'None'
+      },
+      totalCompleted: {
+        type: Number,
+        default: 0,
+        required: true
+      },
+      averageRating: {
+        type: Number,
+        default: 0,
+        required: true
+      }
+    },
     platforms: [String],
     games: [{type: mongoose.Schema.ObjectId, ref: "Game"}]
 });
+
+LibrarySchema.virtual('totalGames').get(function () {
+  return this.games.length;
+});
+
+LibrarySchema.methods.serialize = function() {
+  return {
+    "games": this.games,
+    "chartScores": this.chartScores,
+    "platforms": this.platforms
+  }
+}
 
 const Library = mongoose.model('Library', LibrarySchema);
 

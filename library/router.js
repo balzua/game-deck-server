@@ -18,7 +18,7 @@ router.get('/:user', (req, res) => {
     .then(library => {
       //Check if the requested user's library is private. Only send the library if it is, or if the user matches the logged-in user.
       if (!library.private || (library.private && library.user === req.user.username)) {
-        return res.status(200).json(library);
+        return res.status(200).json(library.serialize());
       } else {
         //Todo: improve error message.
         return res.status(401).json({

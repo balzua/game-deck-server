@@ -32,6 +32,10 @@ const GameSchema = mongoose.Schema({
     user: {
       type: String,
       required: true
+    },
+    dateAdded: {
+      type: Date,
+      default: Date.now
     }
 });
 

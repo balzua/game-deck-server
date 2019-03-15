@@ -33,32 +33,38 @@ router.get('/search/', (req, res) => {
 });
 
 router.post('/', jsonParser, (req, res) => {
-  console.log(req.body);
-  for (let i = 0; i < req.body.guid.length; i++) {
-    axios.get(`https://www.giantbomb.com/api/game/${req.body.guid[i]}`, {
-    params: {
-      api_key: GB_API_KEY,
-      format: 'json'
-    }
-  })
-  .then(gbResponse => ({
-    id: req.body.guid[i],
-    name: gbResponse.data.results.name,
-    description: gbResponse.data.results.deck,
-    image: gbResponse.data.results.image.small_url,
-    genres: gbResponse.data.results.genres.map(genre => genre.name),
-    releaseDate: gbResponse.data.results.original_release_date,
-    platforms: gbResponse.data.results.platforms.map(platform => platform.abbreviation),
-    user: req.user.username
-  }))
-  .then(game => {
-    return Game.create(game);
-  })
-  .then(game => {
-    return Library.findOneAndUpdate({user: req.user.username}, {$push: {games: game._id}});
-  })
-  .then(() => res.status(201).send());
+  const promises = [];
+    for (let i = 0; i < req.body.guid.length; i++) {
+      const gamePromise = axios.get(`https://www.giantbomb.com/api/game/${req.body.guid[i]}`, {
+      params: {
+        api_key: GB_API_KEY,
+        format: 'json'
+      }
+    })
+    .then(gbResponse => ({
+      id: req.body.guid[i],
+      name: gbResponse.data.results.name,
+      description: gbResponse.data.results.deck,
+      image: gbResponse.data.results.image.small_url,
+      genres: gbResponse.data.results.genres.map(genre => genre.name),
+      releaseDate: gbResponse.data.results.original_release_date,
+      platforms: gbResponse.data.results.platforms.map(platform => platform.abbreviation),
+      user: req.user.username
+    }))
+    .then(game => {
+      return Game.create(game).then(game => {
+        return Library.findOneAndUpdate({user: req.user.username}, {$push: {games: game._id}});
+      });
+    })
+    promises.push(gamePromise);
   };
+  Promise.all(promises)
+  .then(() => res.status(201).send())
+  .catch(err => res.status(500).json({
+    code: 500,
+    reason: 'ServerError',
+    message: 'Internal Server Error'
+  }));
 }); 
 
 router.put('/:id', jsonParser, (req, res) => {
@@ -83,7 +89,12 @@ router.put('/:id', jsonParser, (req, res) => {
 
 router.delete('/:id', (req, res) => {
   Game.findOneAndDelete({id: req.params.id, user: req.user.username})
-  .then(() => res.status(204).end());
+  .then(() => res.status(204).end())
+  .catch(() => res.status(500).json({
+    code: 500,
+    reason: 'ServerError',
+    message: 'Internal Server Error'
+  }));
 });
 
 module.exports = {router};

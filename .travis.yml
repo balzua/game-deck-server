@@ -4,3 +4,10 @@ node_js: node
 cache:
   directories:
   - node_modules
+deploy:
+  provider: heroku
+  api_key:
+    secure: lSSJfBvOZME7NcrmoqpVGciM4BdW/DZWG0mMQSZX0Ikxj428/vicsFOOvamgOxL/KtKj67rn0ERO98+xBp1SvRKzU/LIrq2Necm/bXfWALjGZfideUp7YBGTmDmqganJs9NanKO/fz3y+oA9EanXJ4cd+bnwdpr4OYd2LMKIMtuYDejUo7XDfElPEemyvmb5UXk0L4GLjz0Uucpo2v+gRF8+yQq+EtJIhibaS2g/4uNiL/tqkAaLbEYO2Weu2yrqMqQugPhTRzNx3nbI89/wlt/3J2sr2d6JlurVIIpe1yF55TiGg3niPhYEx5s2EG24TohJWeSG1WhTCSe70jREsYvTnfoct/dQKUFCw7yYvaGWYMGPiKSbdepkbBC8mEtVSw2TYTkIRAyx1AgkxO112IFQTOIB1HqcOPpkhkylkfYJCSk5koRbm5ZazCdJkOfTGNZUf7Pe8YknMAU+TRtaKF0DmZe4TSDEVgCTe3rAKXhmkXQFhBW/SzJ5sFTwYp0hgQaR09PbBtcdwgpPahBJDvAvFR5R+Bm+Vh8HWvo8Qe8BjPhpHceRKymKCBIN46DixJuIq9+f2WIWEY/I0C2DSxDuuoHATQS1WC1cAz8ZzO97VjM/daMH1WSy9YDUengJqH6C5WSovwC/t7E3E6t4y+TrVY5XNkb6xci1DPjVn48=
+  app: balzua-game-deck-server
+  on:
+    repo: balzua/game-deck-server

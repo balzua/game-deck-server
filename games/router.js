@@ -10,7 +10,6 @@ const {GB_API_KEY} = require('../config');
 const router = express.Router();
 
 router.get('/search/', (req, res) => {
-    console.log('requesting ' + req.query);
     axios.get('https://www.giantbomb.com/api/search/', {
         params: {
             query: req.query,
